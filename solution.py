@@ -43,29 +43,28 @@ def naked_twins(values):
     strategy repeatedly).
     """
     # Go through every box and check for 2 remaining possibilities
-    possible_twins = [box for box in boxes if len(values[box]) == 2]
-    # unsolved_vals = [values[box] for box in possible_twins]
+    boxes_len_2 = [box for box in boxes if len(values[box]) == 2]
 
     all_twins = []
     processed_twins = []
 
-    for box in possible_twins:
+    for box in boxes_len_2:
         # Skip the rest of the loop if the current box has already been processed
         if box in processed_twins:
             continue
 
         # Eliminate the current box from the list of possible peers
-        possible_peers = [pt for pt in possible_twins if pt != box]
+        possible_peers = [b2 for b2 in boxes_len_2 if b2 != box]
 
         # Check to see if one of the other possible twins is a peer of the current box
-        #   (26 peers for diagonal boxes such as A1, 20 peers for all others)
+        #     (26 peers for diagonal boxes such as A1, 20 peers for all others)
         peer_boxes = [peer for peer in possible_peers if peer in peers[box]]
 
         # Check to see if one of the peer boxes is a naked twin
         twin_boxes = [peer for peer in peer_boxes if values[peer] == values[box]]
 
         # There could be a twin in another unit (3 boxes or more total, that form "naked twins"),
-        #   but for simplicity, let's assume that there is only one possible twin
+        #     but for simplicity, let's assume that there is only one possible twin
         twin_box = None
         if len(twin_boxes) > 0:
             twin_box = twin_boxes[0]
@@ -77,15 +76,21 @@ def naked_twins(values):
         if twin_box is None:
             continue
 
+        values_to_eliminate = values[box]
+
         # Now that a pair of twins has been found, go over all the boxes in the unit(s) they
-        #   share and eliminate the twins' values from these unit peers
+        #     share and eliminate the twins' values from these unit peers
         # Note: Can have 2 units if both twins are in the same 3x3 grid
-        for unit in unitlist:
+        for unit in unitlist: # `unitlist` is a list of lists
+            # Find the units that the twins share
             if box in unit and twin_box in unit:
-                for peer in unit:
-                    values_to_eliminate = values[box]
-                    for digit in values_to_eliminate:
-                        values[peer] = values[peer].replace(digit, '')
+                for unit_box in unit:
+                    # Check that the unit box is not one of the twins
+                    #     and that it is an unsolved box (length > 1)
+                    if unit_box != box and unit_box != twin_box and len(values[unit_box]) > 1:
+                        unsolved_peer_box = unit_box
+                        for digit in values_to_eliminate:
+                            values[unsolved_peer_box] = values[unsolved_peer_box].replace(digit, '')
 
     return values
 
