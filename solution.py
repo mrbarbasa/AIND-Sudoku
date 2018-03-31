@@ -248,14 +248,10 @@ def solve(grid):
 
 
 if __name__ == "__main__":
-    # Naked Twins grid
-    # diag_sudoku_grid = '84.632.....34798257..518.6...6.97..24.8256..12..84.6...8..65..3.54.2.7.8...784.96'
-    # Actual Diagonal Sudoku grid
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
     display(grid2values(diag_sudoku_grid))
     result = solve(diag_sudoku_grid)
     display(result)
-    # print(result)
 
     try:
         import PySudoku
